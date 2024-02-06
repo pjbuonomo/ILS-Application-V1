@@ -4,8 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
 using TabBlazor.QuickTable.EntityFramework;
 using Tabler.Docs.Services;
+
+
 
 
 namespace Tabler.Docs.Server
@@ -24,7 +27,8 @@ namespace Tabler.Docs.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IDataService, LocalDataService>();
-            services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlite("Data Source=app.db"));
+            services.AddDbContextFactory<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddQuickTableEntityFrameworkAdapter();
             services.AddRazorPages();
             services.AddServerSideBlazor();
