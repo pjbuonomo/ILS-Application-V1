@@ -1,25 +1,35 @@
-﻿@using TabBlazor.Components.QuickTables
+﻿@page "/quick-tables-ef"
+@using Tabler.Docs.Data // Adjust if your ApplicationDbContext is in a different namespace
 @using Microsoft.EntityFrameworkCore
-@inject IDbContextFactory<ApplicationDbContext> Factory
+@using TabBlazor.Components.QuickTables
+@inject IDbContextFactory<ApplicationDbContext> DbContextFactory
+
+<style>
+    .quick-table-example {
+        height: 300px;
+    }
+</style>
 
 <div class="card">
-    <QuickTable Items="DbContext.Countries" Pagination="@pagination" Class="quick-table-example">
-        <PropertyColumn Property="@(c => c.Name)" Sortable="true"/>
-        <PropertyColumn Property="@(c => c.Code)" Sortable="true"/>
-        <PropertyColumn Property="@(c => c.Medals.Gold)" Sortable="true"/>
-        <PropertyColumn Property="@(c => c.Medals.Silver)" Sortable="true"/>
-        <PropertyColumn Property="@(c => c.Medals.Bronze)" Sortable="true"/>
-        <PropertyColumn Property="@(c => c.Medals.Total)"/>
+    <QuickTable Items="@GetMarketQuotes()" Pagination="@pagination" Class="quick-table-example">
+        <PropertyColumn Property="@(mq => mq.QuoteDate)" Title="Date" Sortable="true" />
+        <PropertyColumn Property="@(mq => mq.Broker)" Title="Broker" Sortable="true" />
+        <PropertyColumn Property="@(mq => mq.CUSIP)" Title="CUSIP" Sortable="true" />
+        <PropertyColumn Property="@(mq => mq.Bond)" Title="Bond" Sortable="true" />
+        <PropertyColumn Property="@(mq => mq.Size)" Title="Size" Sortable="true" />
+        <PropertyColumn Property="@(mq => mq.Actions)" Title="Actions" Sortable="true" />
+        <PropertyColumn Property="@(mq => mq.Price)" Title="Price" Sortable="true" />
     </QuickTable>
-    <Paginator Value="@pagination"/>
+    <Paginator Value="@pagination" />
 </div>
 
 @code {
     private PaginationState pagination = new PaginationState { ItemsPerPage = 15 };
-    private ApplicationDbContext DbContext { get; set; }
 
-    protected override void OnInitialized()
+    // This method returns an IQueryable<MarketQuote> for QuickTable to consume directly
+    private IQueryable<MarketQuote> GetMarketQuotes()
     {
-        DbContext = Factory.CreateDbContext();
+        var dbContext = DbContextFactory.CreateDbContext();
+        return dbContext.MarketQuotes;
     }
 }

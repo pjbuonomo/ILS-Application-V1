@@ -2,8 +2,8 @@
 @inject IDataService Data
 <style>
     .quick-table tr {
-         height: 45px;
-     }
+        height: 45px;
+    }
 </style>
 <div class="card">
     <QuickTable TGridItem="Tabler.Docs.Data.Country" Virtualize="true" ItemsProvider="ItemsProvider" ItemSize="30" class="quick-table-example">
@@ -33,3 +33,32 @@
     }
 
 }
+
+@*<div class="card">
+    <QuickTable TGridItem="Tabler.Docs.Data.MarketQuote" Virtualize="true" ItemsProvider="ItemsProvider" ItemSize="30" class="quick-table-example">
+        <PropertyColumn Property="@(x => x.Bond)" Sortable="true" IsDefaultSort="SortDirection.Ascending"></PropertyColumn>
+        <PropertyColumn Property="@(x => x.CUSIP)" Sortable="true"></PropertyColumn>
+        <PropertyColumn Property="@(x => x.Broker)"></PropertyColumn>
+    </QuickTable>
+</div>
+
+@code {
+
+    private GridItemsProvider<Tabler.Docs.Data.MarketQuote> ItemsProvider { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ItemsProvider = async req =>
+        {
+            var sortBy = req.GetSortByProperties().SingleOrDefault();
+            var gridItemsProviderResult = await Data.GetMarketQuotesAsync(
+                req.StartIndex,
+                req.Count,
+                sortBy.PropertyName,
+                sortBy.Direction == SortDirection.Ascending,
+                req.CancellationToken);
+            return gridItemsProviderResult;
+        };
+    }
+
+}*@
